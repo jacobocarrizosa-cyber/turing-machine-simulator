@@ -36,4 +36,46 @@
         </div>
     </div>
 </div>
+
+<div class="card" style="margin-top: 1.5rem;">
+    <h3>Historial de Ejecuciones</h3>
+    {% if machine.executions.all %}
+        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+            <thead>
+                <tr style="background-color: var(--bg); border-bottom: 2px solid var(--border);">
+                    <th style="padding: 0.75rem; text-align: left;">Cadena de Entrada</th>
+                    <th style="padding: 0.75rem; text-align: left;">Resultado</th>
+                    <th style="padding: 0.75rem; text-align: center;">Pasos</th>
+                    <th style="padding: 0.75rem; text-align: left;">Fecha</th>
+                    <th style="padding: 0.75rem; text-align: center;">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for execution in machine.executions.all|dictsortreversed:"executed_at" %}
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.75rem; font-family: monospace; font-size: 1.1rem;">
+                            {{ execution.input_string|default:"λ (Vacía)" }}
+                        </td>
+                        <td style="padding: 0.75rem;">
+                            <span class="{% if execution.status == 'Aceptada' %}alert-success{% elif execution.status == 'Rechazada' %}alert-error{% else %}btn-secondary{% endif %}" style="padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.85rem; border: none; display: inline-block;">
+                                {{ execution.status }}
+                            </span>
+                        </td>
+                        <td style="padding: 0.75rem; text-align: center;">{{ execution.steps_count }}</td>
+                        <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--text-light);">
+                            {{ execution.executed_at|date:"d/m/Y H:i" }}
+                        </td>
+                        <td style="padding: 0.75rem; text-align: center;">
+                            <a href="{% url 'simulation_step' execution.id %}?step=0" class="btn" style="padding: 0.35rem 0.5rem; font-size: 0.8rem; background-color: var(--text-light);">
+                                Ver Cinta
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="color: var(--text-light); margin-top: 1rem;">Aún no se ha evaluado ninguna cadena en esta máquina.</p>
+    {% endif %}
+</div>
 {% endblock %}
