@@ -1,0 +1,39 @@
+{% extends 'turing_machine/base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>Detalles de la Máquina: {{ machine.name }}</h2>
+    <p>{{ machine.description|default:"Sin descripción." }}</p>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+        <div>
+            <h3>Definición Formal (7-tupla)</h3>
+            <ul style="line-height: 1.8;">
+                <li><strong>Estados:</strong> {{ tm_data.states|join:", " }}</li>
+                <li><strong>Alfabeto de Entrada:</strong> {{ tm_data.input_alphabet|join:", " }}</li>
+                <li><strong>Alfabeto de Cinta:</strong> {{ tm_data.tape_alphabet|join:", " }}</li>
+                <li><strong>Estado Inicial:</strong> {{ tm_data.initial_state }}</li>
+                <li><strong>Estados Finales:</strong> {{ tm_data.final_states|join:", " }}</li>
+                <li><strong>Símbolo Blanco:</strong> {{ tm_data.blank_symbol }}</li>
+            </ul>
+        </div>
+        
+        <div style="background-color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid var(--border);">
+            <h3>Ejecutar Simulación</h3>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="input_string">Cadena de Entrada</label>
+                    <input type="text" name="input_string" id="input_string" class="form-control" placeholder="Ej. 1010">
+                    <small style="color: var(--text-light); display: block; margin-top: 0.5rem;">
+                        * Deja en blanco para simular la cadena vacía (λ).
+                    </small>
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem; font-size: 1rem; padding: 0.75rem;">
+                    Iniciar Simulación ▶️
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

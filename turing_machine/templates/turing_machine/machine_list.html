@@ -1,0 +1,47 @@
+{% extends 'turing_machine/base.html' %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+    <div>
+        <h2>Máquinas de Turing Disponibles</h2>
+        {% if machines %}
+            {% for machine in machines %}
+                <div class="card">
+                    <h3>{{ machine.name }}</h3>
+                    <p>{{ machine.description|default:"Sin descripción." }}</p>
+                    <small style="color: var(--text-light)">Subida el: {{ machine.created_at|date:"d/m/Y H:i" }}</small>
+                    <div style="margin-top: 1rem;">
+                        <a href="{% url 'machine_detail' machine.id %}" class="btn">Configurar e Iniciar Simulación</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="card">
+                <p>No hay máquinas registradas en el sistema todavía. Utiliza el formulario de la derecha para cargar una.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div>
+        <h2>Cargar Nueva Máquina (.mt)</h2>
+        <div class="card">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name">Nombre de la Máquina</label>
+                    <input type="text" name="name" id="name" class="form-control" placeholder="Ej. Palíndromo Binario" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Descripción / Propósito</label>
+                    <textarea name="description" id="description" class="form-control" rows="3" placeholder="Ej. Reconoce cadenas que se leen igual de izquierda a derecha."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="mt_file">Archivo de definición (.mt)</label>
+                    <input type="file" name="mt_file" id="mt_file" class="form-control" accept=".mt" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 0.5rem;">Cargar y Validar Archivo</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

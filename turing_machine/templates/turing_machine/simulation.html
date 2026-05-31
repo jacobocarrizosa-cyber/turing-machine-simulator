@@ -1,0 +1,56 @@
+{% extends 'turing_machine/base.html' %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+        <h2 style="margin: 0;">Simulación: {{ execution.turing_machine.name }}</h2>
+        <div>
+            <span class="btn btn-secondary" style="cursor: default;">Paso {{ current_step }} de {{ total_steps }}</span>
+            <span class="btn {% if execution.status == 'Aceptada' %}alert-success{% elif execution.status == 'Rechazada' %}alert-error{% else %}btn-secondary{% endif %}" style="margin-left: 0.5rem; border: none; cursor: default;">
+                Resultado: {{ execution.status }}
+            </span>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 1.5rem;">
+        <p style="font-size: 1.1rem;"><strong>Cadena evaluada:</strong> {{ execution.input_string|default:"λ (Vacía)" }}</p>
+        <p style="font-size: 1.1rem; color: var(--primary);"><strong>Estado actual del cabezal:</strong> {{ snapshot.current_state }}</p>
+    </div>
+
+    <div class="tape-container">
+        {% if snapshot %}
+            {% for char in snapshot.tape|make_list %}
+                <div class="tape-cell {% if forloop.counter0 == snapshot.head_position %}active{% endif %}">
+                    {{ char }}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="tape-cell active">{{ execution.turing_machine.blank_symbol }}</div>
+        {% endif %}
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 2rem;">
+        <a href="?step=0" class="btn btn-secondary">⏮️ Inicio</a>
+        
+        {% if current_step > 0 %}
+            <a href="?step={{ current_step|add:'-1' }}" class="btn">◀️ Anterior</a>
+        {% else %}
+            <span class="btn btn-secondary" style="opacity: 0.5; cursor: not-allowed;">◀️ Anterior</span>
+        {% endif %}
+
+        {% if current_step < total_steps %}
+            <a href="?step={{ current_step|add:'1' }}" class="btn" style="background-color: var(--success);">Siguiente ▶️</a>
+        {% else %}
+            <span class="btn btn-secondary" style="opacity: 0.5; cursor: not-allowed;">Siguiente ▶️</span>
+        {% endif %}
+
+        <a href="?step={{ total_steps }}" class="btn btn-secondary">Fin ⏭️</a>
+    </div>
+    
+    <div style="text-align: center; margin-top: 2.5rem;">
+        <a href="{% url 'machine_detail' execution.turing_machine.id %}" style="color: var(--text-light); text-decoration: underline;">
+            Volver a los detalles de la máquina
+        </a>
+    </div>
+</div>
+{% endblock %}
